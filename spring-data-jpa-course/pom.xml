@@ -28,6 +28,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency> <!-- allows connection with postgres -->
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

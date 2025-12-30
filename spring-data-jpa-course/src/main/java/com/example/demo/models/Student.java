@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.models;
 
 import javax.persistence.*;
 
@@ -58,7 +58,6 @@ public class Student {
     public Student(
                    String firstName,
                    Integer age, String email) {
-
         this.firstName = firstName;
         this.age = age;
         this.email=email;
