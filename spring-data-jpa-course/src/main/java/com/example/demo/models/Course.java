@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -54,9 +55,6 @@ public class Course {
             joinColumns= @JoinColumn(name="course_id"),
             inverseJoinColumns = @JoinColumn(name="student_id")
     )
+    @JsonManagedReference
     private List<Student> students= new ArrayList<>();
-
-    public void addStudent(Student student){
-
-    }
 }

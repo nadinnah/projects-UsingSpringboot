@@ -1,6 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.models.Course;
 import com.example.demo.models.Student;
+import com.example.demo.repositories.CourseRepository;
 import com.example.demo.repositories.StudentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,10 +23,12 @@ public class Application {
 
     //to have code running after application startup
     @Bean
-    CommandLineRunner commandLineRunner(StudentRepository studentRepository){
+    CommandLineRunner commandLineRunner(StudentRepository studentRepository, CourseRepository courseRepository){
         return args->{
             Student nad= new Student("Nadin", 23,"nadinahmedmohamed@gmail.com");
             studentRepository.save(nad);
+            Course course= new Course("CSE2323", "computer programming");
+            courseRepository.save(course);
         };
     }
 }

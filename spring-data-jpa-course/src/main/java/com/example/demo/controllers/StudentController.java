@@ -15,10 +15,10 @@ public class StudentController {
     @Autowired
     StudentService studentService;
 
-//    //methods
-//    @GetMapping("/students")
-//    public List<Student> getAllStudents(){
-//        return studentRepo.findAll();
-//    }
+    //methods
+    @GetMapping("/students")
+    public List<Student> getAllStudents(){
+        return studentService.getAllStudents();
+    }
 
 }
