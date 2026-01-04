@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -93,7 +94,7 @@ public class Student {
     }
 
     @ManyToMany(mappedBy = "students")
-    @JsonBackReference
+    @JsonIgnore
     private List<Course> courses= new ArrayList<>();
 
 

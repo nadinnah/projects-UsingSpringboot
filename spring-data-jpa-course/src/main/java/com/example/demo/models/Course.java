@@ -55,6 +55,5 @@ public class Course {
             joinColumns= @JoinColumn(name="course_id"),
             inverseJoinColumns = @JoinColumn(name="student_id")
     )
-    @JsonManagedReference
     private List<Student> students= new ArrayList<>();
 }
