@@ -1,20 +1,30 @@
 package com.example.tacocloud.models;
 
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 @Data
-public class Order {
+@Entity
+@Table(name = "Taco_Order")
+// Order entities should be persisted to a table named Taco_Order in the database.
+public class Order implements Serializable {
+//it’s necessary with Order. Without it, JPA would default to persisting the entities to a table named
+//Order, but order is a reserved word in SQL and would cause problems
 
+    private static final long serialVersionUID= 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Date placedAt;
@@ -48,5 +58,10 @@ public class Order {
 
     public void addDesign(Taco design) {
         this.tacos.add(design);
+    }
+
+    @PrePersist
+    void placedAt() {
+        this.placedAt = new Date();
     }
 }

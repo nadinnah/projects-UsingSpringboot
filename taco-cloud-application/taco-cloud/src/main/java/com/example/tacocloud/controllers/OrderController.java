@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.tacocloud.models.Order;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 
 @Controller
@@ -26,17 +27,20 @@ public class OrderController {
     }
 
     @GetMapping("/current")
-    public String orderForm(Model model){
-        model.addAttribute("order", new Order());
+    public String orderForm(){
         return "orderForm";
     }
 
     @PostMapping
-    public String processOrder(@Valid Order order, Errors errors) {
+    public String processOrder(@Valid Order order, Errors errors, SessionStatus sessionStatus) {
 
         if(errors.hasErrors()){
             return "orderForm";
         }
+        orderRepo.save(order);
+        sessionStatus.setComplete(); //Once the order is saved, you don’t need it hanging around in a session anymore.
+        //processOrder() method asks for a SessionStatus parameter and
+        //calls its setComplete() method to reset the session.
        return "redirect:/";
     }
 }
