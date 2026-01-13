@@ -15,8 +15,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "Taco_Order")
-// Order entities should be persisted to a table named Taco_Order in the database.
+@Table(name = "Taco_Order") // Order entities should be persisted to a table named Taco_Order in the database.
 public class Order implements Serializable {
 //it’s necessary with Order. Without it, JPA would default to persisting the entities to a table named
 //Order, but order is a reserved word in SQL and would cause problems
