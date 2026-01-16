@@ -58,6 +58,10 @@ public class SecurityConfig {
         return manager;
     }
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+
     //Use UserDetailsService when you only authenticate
     //Use UserDetailsManager when you want to create / update / delete users
 //    @Bean
