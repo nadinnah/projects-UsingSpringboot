@@ -28,38 +28,38 @@ public class SecurityConfig {
 
     //in-memory user store, suitable for testing/small apps
     //but customers won't be able to register with the application and manage their own user accounts.
-//            @Bean
-//            public InMemoryUserDetailsManager userDetailService(PasswordEncoder encoder){
-//                UserDetails user1= User.withUsername("buzz").password(encoder.encode("password")).authorities("ROLE_USER").build();
-//                UserDetails user2= User.withUsername("woody").password(encoder.encode("password")).authorities("ROLE_USER").build();
-//                return new InMemoryUserDetailsManager(user1,user2);
-//            }
+    @Bean
+    public InMemoryUserDetailsManager userDetailService(PasswordEncoder encoder){
+        UserDetails user1= User.withUsername("buzz").password(encoder.encode("password")).authorities("ROLE_USER").build();
+        UserDetails user2= User.withUsername("woody").password(encoder.encode("password")).authorities("ROLE_USER").build();
+        return new InMemoryUserDetailsManager(user1,user2);
+    }
 
     //jdbc-based user store
-    @Autowired
-    DataSource dataSource; //DataSource so that it knows how to access the database
+//            @Autowired
+//            DataSource dataSource; //DataSource so that it knows how to access the database
 
     //Uses JDBC authentication
     //Reads users from the database
     //Uses Spring Security’s default queries
     //Does NOT insert or modify users
-    @Bean
-    public UserDetailsService userDetailsService(){
-        JdbcUserDetailsManager manager= new JdbcUserDetailsManager(dataSource);
+//            @Bean
+//            public UserDetailsService userDetailsService(){
+//                JdbcUserDetailsManager manager= new JdbcUserDetailsManager(dataSource);
+//
+//                manager.setUsersByUsernameQuery(
+//                        "select username, password, enabled from Users where username=?"
+//                );
+//
+//                manager.setAuthoritiesByUsernameQuery(
+//                        "select username, authority from UserAuthorities where username=?"
+//                );
+//
+//                return manager;
+//            }
 
-        manager.setUsersByUsernameQuery(
-                "select username, password, enabled from Users where username=?"
-        );
-
-        manager.setAuthoritiesByUsernameQuery(
-                "select username, authority from UserAuthorities where username=?"
-        );
-
-        return manager;
-    }
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+//    @Autowired
+//    UserDetailsService userDetailsService;
 
 
     //Use UserDetailsService when you only authenticate
@@ -92,18 +92,7 @@ public class SecurityConfig {
                         .requestMatchers("/design", "/orders")
                         .hasRole("USER")
                         .requestMatchers("/", "/**").permitAll())
-                .formLogin(form->form.loginPage("/login"));
-        return http.build();
-
-        //Security rules declared first take precedence
-        //over those declared lower down. If you were to swap the order of those two security
-        //rules, all requests would have permitAll() applied to them; the rule for /design and
-        ///orders requests would have no effect.
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+                .formLogin(form->form.loginPage("/login"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()  // allow H2 console ,Anyone can access
                         .anyRequest().authenticated()                   // other endpoints require authentication
@@ -114,10 +103,32 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)    // allow frames for H2 console
                 )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);             // default login page for other endpoints
-
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
         return http.build();
+
+        //Security rules declared first take precedence
+        //over those declared lower down. If you were to swap the order of those two security
+        //rules, all requests would have permitAll() applied to them; the rule for /design and
+        ///orders requests would have no effect.
     }
+
+//                    @Bean
+//                    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//                        http
+//                                .authorizeHttpRequests(auth -> auth
+//                                        .requestMatchers("/h2-console/**").permitAll()  // allow H2 console ,Anyone can access
+//                                        .anyRequest().authenticated()                   // other endpoints require authentication
+//                                )
+//                                .csrf(csrf -> csrf
+//                                        .ignoringRequestMatchers("/h2-console/**")    // disable CSRF for H2 console
+//                                ) // csrf= An attacker tricks a logged-in user’s browser into sending a fake request.
+//                                .headers(headers -> headers
+//                                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)    // allow frames for H2 console
+//                                )
+//                                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);             // default login page for other endpoints
+//
+//                        return http.build();
+//                    }
 
     //AuthenticationManagerBuilder = the guard’s instruction manual
     //userDetailsService = a phonebook where the guard looks up users
