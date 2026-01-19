@@ -32,7 +32,9 @@ public class SecurityConfig {
     public InMemoryUserDetailsManager userDetailService(PasswordEncoder encoder){
         UserDetails user1= User.withUsername("buzz").password(encoder.encode("password")).authorities("ROLE_USER").build();
         UserDetails user2= User.withUsername("woody").password(encoder.encode("password")).authorities("ROLE_USER").build();
-        return new InMemoryUserDetailsManager(user1,user2);
+        UserDetails user3= User.withUsername("nad4").password(encoder.encode("password")).authorities("ROLE_USER").build();
+
+        return new InMemoryUserDetailsManager(user1,user2,user3);
     }
 
     //jdbc-based user store
