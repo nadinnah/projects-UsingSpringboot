@@ -1,44 +1,47 @@
-create table if not exists Ingredient(
-    id varchar(4) not null,
-    name varchar(25) not null,
-    type varchar(10) not null,
-    primary key (id)
+DROP TABLE IF EXISTS Taco_Order_Tacos;
+DROP TABLE IF EXISTS Taco_Order;
+DROP TABLE IF EXISTS Taco_Ingredients;
+DROP TABLE IF EXISTS Taco;
+DROP TABLE IF EXISTS Ingredient;
+
+CREATE TABLE Ingredient (
+                            id VARCHAR(10) NOT NULL PRIMARY KEY,
+                            name VARCHAR(50) NOT NULL,
+                            type VARCHAR(10) NOT NULL
 );
 
-create table if not exists Taco(
-    id identity,
-    name varchar(50) not null,
-    createdAt timestamp not null
+CREATE TABLE Taco (
+                      id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                      name VARCHAR(50) NOT NULL,
+                      created_at TIMESTAMP
 );
 
-create table if not exists Taco_Ingredients(
-    taco bigint not null,
-    ingredient varchar(4) not null
+CREATE TABLE Taco_Ingredients (
+                                  taco_id BIGINT NOT NULL,
+                                  ingredients_id VARCHAR(10) NOT NULL,
+                                  PRIMARY KEY (taco_id, ingredients_id),
+                                  FOREIGN KEY (taco_id) REFERENCES Taco(id),
+                                  FOREIGN KEY (ingredients_id) REFERENCES Ingredient(id)
 );
 
-alter table Taco_Ingredients
-    add foreign key (taco) references Taco(id);
-alter table Taco_ingredients
-    add foreign key (ingredient) references Ingredient(id);
+CREATE TABLE Taco_Order (
+                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(50) NOT NULL,
+                            street VARCHAR(50) NOT NULL,
+                            city VARCHAR(50) NOT NULL,
+                            state VARCHAR(50) NOT NULL,
+                            zip VARCHAR(10) NOT NULL,
+                            cc_number VARCHAR(16),
+                            cc_expiration VARCHAR(5),
+                            cc_cvv VARCHAR(3),
+                            placed_at TIMESTAMP
 
-create Table if not exists Taco_Order(
-    id identity,
-    deliveryName varchar(50) not null,
-    deliveryStreet varchar(50) not null,
-    deliveryCity varchar(50) not null,
-    deliveryState varchar(2) not null,
-    deliveryZip varchar(10) not null,
-    ccNumber varchar(16) not null,
-    ccExpiration varchar(5) not null,
-    ccCVV varchar(3) not null,
-    placedAt timestamp not null
 );
 
-create table if not exists Taco_Order_Tacos (
-    tacoOrder bigint not null,
-    taco bigint not null
+CREATE TABLE Taco_Order_Tacos (
+                                  taco_order_id BIGINT NOT NULL,
+                                  taco_id BIGINT NOT NULL,
+                                  PRIMARY KEY (taco_order_id, taco_id),
+                                  FOREIGN KEY (taco_order_id) REFERENCES Taco_Order(id),
+                                  FOREIGN KEY (taco_id) REFERENCES Taco(id)
 );
-alter table Taco_Order_Tacos
-    add foreign key (tacoOrder) references Taco_Order(id);
-alter table Taco_Order_Tacos
-    add foreign key (taco) references Taco(id);
