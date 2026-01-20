@@ -1,12 +1,14 @@
 package com.example.tacocloud.repositories;
 
 import com.example.tacocloud.models.Order;
+import com.example.tacocloud.models.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Date;
 import java.util.List;
 
 public interface OrderRepository extends CrudRepository<Order,Long> {
+    List<Order> findByUserOrderByPlacedAtDesc(User user);
 //customizing jpa repo notes:
 
     //List<Order> findByDeliveryZip(String deliveryZip);

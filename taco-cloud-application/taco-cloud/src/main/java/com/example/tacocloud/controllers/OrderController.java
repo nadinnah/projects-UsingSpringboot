@@ -5,6 +5,7 @@ import com.example.tacocloud.models.User;
 import com.example.tacocloud.repositories.OrderRepository;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,7 @@ import com.example.tacocloud.models.Order;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-
+@ConfigurationProperties
 @Controller
 @RequestMapping("/orders")
 @SessionAttributes("order")
@@ -47,5 +48,13 @@ public class OrderController {
         //processOrder() method asks for a SessionStatus parameter and
         //calls its setComplete() method to reset the session.
        return "redirect:/";
+    }
+
+    @GetMapping
+    public String ordersForUser(
+            @AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("orders",
+                orderRepo.findByUserOrderByPlacedAtDesc(user));
+        return "orderList";
     }
 }
