@@ -50,6 +50,11 @@ public class Order implements Serializable {
     private String ccExpiration;
 
     @Digits(integer=3, fraction = 0, message = "Invalid CVV")
+    @Column(name = "cc_cvv")
+    //Hibernate applies a physical naming strategy
+    //ccCVV=	cccvv ❌
+    //ccCvv=    cc_cvv ✅
+    //that's why i added a @Column
     private String ccCVV;
 
     @ManyToMany(targetEntity=Taco.class)
@@ -65,5 +70,6 @@ public class Order implements Serializable {
     }
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

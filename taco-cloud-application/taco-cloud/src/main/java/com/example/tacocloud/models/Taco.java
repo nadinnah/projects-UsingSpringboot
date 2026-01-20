@@ -23,7 +23,7 @@ public class Taco {
 
     @ManyToMany(targetEntity=Ingredient.class)
     @Size(min=1, message = "must choose at least 1 ingredient")
-    private List<String> ingredients;
+    private List<Ingredient> ingredients;
 
     @PrePersist
     //use this to set the createdAt property to the current date and

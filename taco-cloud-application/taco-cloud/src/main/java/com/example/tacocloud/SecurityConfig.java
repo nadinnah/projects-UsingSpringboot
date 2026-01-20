@@ -28,37 +28,41 @@ public class SecurityConfig {
 
     //in-memory user store, suitable for testing/small apps
     //but customers won't be able to register with the application and manage their own user accounts.
-    @Bean
-    public InMemoryUserDetailsManager userDetailService(PasswordEncoder encoder){
-        UserDetails user1= User.withUsername("buzz").password(encoder.encode("password")).authorities("ROLE_USER").build();
-        UserDetails user2= User.withUsername("woody").password(encoder.encode("password")).authorities("ROLE_USER").build();
-        UserDetails user3= User.withUsername("nad4").password(encoder.encode("password")).authorities("ROLE_USER").build();
-
-        return new InMemoryUserDetailsManager(user1,user2,user3);
-    }
+//            @Bean
+//            public InMemoryUserDetailsManager userDetailService(PasswordEncoder encoder){
+//                UserDetails user1= User.withUsername("buzz").password(encoder.encode("password")).authorities("ROLE_USER").build();
+//                UserDetails user2= User.withUsername("woody").password(encoder.encode("password")).authorities("ROLE_USER").build();
+//                UserDetails user3= User.withUsername("nad4").password(encoder.encode("password")).authorities("ROLE_USER").build();
+//
+//                return new InMemoryUserDetailsManager(user1,user2,user3);
+//            }
 
     //jdbc-based user store
-//            @Autowired
-//            DataSource dataSource; //DataSource so that it knows how to access the database
+    @Autowired
+    DataSource dataSource; //DataSource so that it knows how to access the database
 
     //Uses JDBC authentication
     //Reads users from the database
     //Uses Spring Security’s default queries
     //Does NOT insert or modify users
-//            @Bean
-//            public UserDetailsService userDetailsService(){
-//                JdbcUserDetailsManager manager= new JdbcUserDetailsManager(dataSource);
-//
-//                manager.setUsersByUsernameQuery(
-//                        "select username, password, enabled from Users where username=?"
-//                );
-//
-//                manager.setAuthoritiesByUsernameQuery(
-//                        "select username, authority from UserAuthorities where username=?"
-//                );
-//
-//                return manager;
-//            }
+    @Bean
+    public UserDetailsService userDetailsService(){
+        JdbcUserDetailsManager manager= new JdbcUserDetailsManager(dataSource);
+
+        manager.setUsersByUsernameQuery(
+                "select username, password, enabled from Users where username=?"
+        );
+
+//        manager.setAuthoritiesByUsernameQuery(
+//                "select username, authority from UserAuthorities where username=?"
+//        ); //need to create the table for this to work
+
+        manager.setAuthoritiesByUsernameQuery(
+                "select username, 'ROLE_USER' as authority from Users where username=?"
+        );
+
+        return manager;
+    }
 
 //    @Autowired
 //    UserDetailsService userDetailsService;
@@ -91,21 +95,18 @@ public class SecurityConfig {
 
         //order of these rules is important.
         http.authorizeHttpRequests(auth->auth
-                        .requestMatchers("/design", "/orders")
+                        .requestMatchers("/design", "/orders/**")
                         .hasRole("USER")
                         .requestMatchers("/", "/**").permitAll())
-                .formLogin(form->form.loginPage("/login"))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll()  // allow H2 console ,Anyone can access
-                        .anyRequest().authenticated()                   // other endpoints require authentication
-                )
+                .formLogin(form->form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/design", true))
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/h2-console/**")    // disable CSRF for H2 console
                 ) // csrf= An attacker tricks a logged-in user’s browser into sending a fake request.
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)    // allow frames for H2 console
-                )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+                );
         return http.build();
 
         //Security rules declared first take precedence

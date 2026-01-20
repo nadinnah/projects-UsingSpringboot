@@ -18,10 +18,10 @@ CREATE TABLE Taco (
 
 CREATE TABLE Taco_Ingredients (
                                   taco_id BIGINT NOT NULL,
-                                  ingredient_id VARCHAR(10) NOT NULL,
-                                  PRIMARY KEY (taco_id, ingredient_id),
+                                  ingredients_id VARCHAR(10) NOT NULL,
+                                  PRIMARY KEY (taco_id, ingredients_id),
                                   FOREIGN KEY (taco_id) REFERENCES Taco(id),
-                                  FOREIGN KEY (ingredient_id) REFERENCES Ingredient(id)
+                                  FOREIGN KEY (ingredients_id) REFERENCES Ingredient(id)
 );
 
 CREATE TABLE Taco_Order (
@@ -35,6 +35,7 @@ CREATE TABLE Taco_Order (
                             cc_expiration VARCHAR(5),
                             cc_cvv VARCHAR(3),
                             placed_at TIMESTAMP
+
 );
 
 CREATE TABLE Taco_Order_Tacos (
