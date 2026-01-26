@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface TacoRepository extends PagingAndSortingRepository<Taco,Long>, CrudRepository<Taco,Long> {
 
 }

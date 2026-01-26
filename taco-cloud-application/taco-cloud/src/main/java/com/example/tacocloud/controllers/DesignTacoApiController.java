@@ -7,15 +7,24 @@ import com.example.tacocloud.models.Taco;
 import com.example.tacocloud.repositories.OrderRepository;
 import com.example.tacocloud.repositories.TacoRepository;
 import com.example.tacocloud.services.TacoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import jakarta.annotation.Resources;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @CrossOrigin(origins = "*")
@@ -34,19 +43,35 @@ public class DesignTacoApiController{
         this.orderRepo=orderRepo;
     }
 
+    //HATEOAS example
+    //HATEOAS isn’t about fixing bugs
+    //it’s about teaching APIs to describe themselves.
     @GetMapping("/recent")
-    public Iterable<Taco> recentTacos(){
+    public CollectionModel<EntityModel<Taco>> recentTacos(){
         PageRequest page= PageRequest.of(0,orderProps.getPageSize(), Sort.by("createdAt").descending());
-        return tacoRepo.findAll(page).getContent();
+
+        List<Taco> tacos= tacoRepo.findAll(page).getContent();
+        List<EntityModel<Taco>> tacoResources =
+                tacos.stream().map(taco -> EntityModel.of(taco, linkTo(methodOn(DesignTacoApiController.class).findById(taco.getId())).withSelfRel())).toList();
+
+
+        return CollectionModel.of(tacoResources, linkTo(methodOn(DesignTacoApiController.class).recentTacos()).withRel("recents"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Taco> findById(@PathVariable Long id){
-        Optional<Taco> optTaco= tacoRepo.findById(id);
-        if(optTaco.isPresent()){
-            return new ResponseEntity<>(optTaco.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>((HttpHeaders) null, HttpStatus.NOT_FOUND);
+    public EntityModel<Taco> findById(@PathVariable Long id){
+        Taco taco= tacoRepo.findById(id).orElseThrow(()->new NoSuchElementException());
+            return EntityModel.of(
+                    taco,
+                    linkTo(methodOn(DesignTacoApiController.class).findById(id)).withSelfRel(),
+                    linkTo(methodOn(DesignTacoApiController.class).recentTacos()).withRel("recents")
+            );
+
+//        if(taco.isPresent()){
+//            return new ResponseEntity<>(taco.get(), HttpStatus.OK);
+//        }
+       //return new ResponseEntity<>((HttpHeaders) null, HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping(consumes = "application/json")
