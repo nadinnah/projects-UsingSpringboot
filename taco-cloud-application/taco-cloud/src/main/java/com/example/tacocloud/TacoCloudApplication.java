@@ -2,6 +2,8 @@ package com.example.tacocloud;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class TacoCloudApplication {
@@ -9,7 +11,10 @@ public class TacoCloudApplication {
     public static void main(String[] args) {
         SpringApplication.run(TacoCloudApplication.class, args);
     }
-
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
 
 //Application Context is like a factory and registry for your objects (aka beans).
