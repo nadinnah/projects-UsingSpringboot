@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class IngredientService {
 
@@ -31,8 +34,16 @@ public class IngredientService {
     }
 
     public Ingredient getIngredientById(String ingredientId) {
+        //getForObject doesnt return HTTP status
         return rest.getForObject("http://localhost:8080/ingredients/{id}",
                 Ingredient.class, ingredientId);
+
+        //good with many parameters:
+//        Map<String,String> urlVariables = new HashMap<>();
+//        urlVariables.put("id", ingredientId);
+//        urlVariables.put("id", ingredientId);
+//        return rest.getForObject("http://localhost:8080/ingredients/{id}",
+//                Ingredient.class, urlVariables);
     }
 
     //Real-world analogy
